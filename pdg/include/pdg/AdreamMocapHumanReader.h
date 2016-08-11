@@ -34,6 +34,9 @@ private:
     void optitrackCallbackTorso(const optitrack::or_pose_estimator_state::ConstPtr& msg);
     void optitrackCallbackHead(const optitrack::or_pose_estimator_state::ConstPtr& msg);
     void optitrackCallbackHand(const optitrack::or_pose_estimator_state::ConstPtr& msg);
+    double offset_x=0;
+	double offset_y=0;
+	double offset_z=0;
 };
 
 #endif	/* ADREAMMOCAPHUMANREADER_H */
