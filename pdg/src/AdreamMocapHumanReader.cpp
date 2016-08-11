@@ -243,7 +243,7 @@ void AdreamMocapHumanReader::optitrackCallbackTorso(const optitrack::or_pose_est
             bg::model::point<double, 3, bg::cs::cartesian> humanPosition;
             humanPosition.set<0>(msg->pos[0].x + offset_x);
             humanPosition.set<1>(msg->pos[0].y + offset_y);
-            humanPosition.set<2>(msg->pos[0].z + offset_z);
+            humanPosition.set<2>(msg->pos[0].z + offset_z-1.31);
 
             //set the human orientation
             std::vector<double> humanOrientation;
