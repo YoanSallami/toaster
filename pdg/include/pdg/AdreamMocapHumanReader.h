@@ -25,7 +25,9 @@
 class AdreamMocapHumanReader : public HumanReader {
 public:
     AdreamMocapHumanReader(ros::NodeHandle& node, std::string topicTorso, std::string topicHead, std::string topicHand);
-
+    double offset_x=0;
+	double offset_y=0;
+	double offset_z=0;
 private:
     bool torso_;
     ros::Subscriber subTorso_;
@@ -34,9 +36,7 @@ private:
     void optitrackCallbackTorso(const optitrack::or_pose_estimator_state::ConstPtr& msg);
     void optitrackCallbackHead(const optitrack::or_pose_estimator_state::ConstPtr& msg);
     void optitrackCallbackHand(const optitrack::or_pose_estimator_state::ConstPtr& msg);
-    double offset_x=0;
-	double offset_y=0;
-	double offset_z=0;
+    
 };
 
 #endif	/* ADREAMMOCAPHUMANREADER_H */

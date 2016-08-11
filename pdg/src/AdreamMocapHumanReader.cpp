@@ -27,9 +27,14 @@ void AdreamMocapHumanReader::optitrackCallbackHead(const optitrack::or_pose_esti
     ros::Time now = ros::Time::now();
     Human* curHuman;
     Joint* curJoint;
-    if (ros::param::get("mocap_calib_world_x",offset_x))
+    if (ros::param::get("mocap_calib_world_x",offset_x)){
         if (ros::param::get("mocap_calib_world_y",offset_y))
             if (ros::param::get("mocap_calib_world_z",offset_z))
+    } else {
+        offset_x=0;
+        offset_y=0;
+        offset_z=0;
+    }
 
     try {
         std::string humId = "HERAKLES_HUMAN1";
@@ -123,9 +128,14 @@ void AdreamMocapHumanReader::optitrackCallbackHand(const optitrack::or_pose_esti
     ros::Time now = ros::Time::now();
     Human* curHuman;
     Joint* curJoint;
-    if (ros::param::get("mocap_calib_world_x",offset_x))
+    if (ros::param::get("mocap_calib_world_x",offset_x)){
         if (ros::param::get("mocap_calib_world_y",offset_y))
             if (ros::param::get("mocap_calib_world_z",offset_z))
+    } else {
+        offset_x=0;
+        offset_y=0;
+        offset_z=0;
+    }
 
     try {
 
