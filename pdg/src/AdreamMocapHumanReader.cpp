@@ -6,10 +6,6 @@
  */
 
 #include "pdg/AdreamMocapHumanReader.h"
-
-double offset_x=0;
-double offset_y=0;
-double offset_z=0;
 // A human reader is a class that will read data from human(s)
 
 AdreamMocapHumanReader::AdreamMocapHumanReader(ros::NodeHandle& node, std::string topicHead, std::string topicHand) {
