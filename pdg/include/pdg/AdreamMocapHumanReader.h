@@ -25,9 +25,9 @@
 class AdreamMocapHumanReader : public HumanReader {
 public:
     AdreamMocapHumanReader(ros::NodeHandle& node, std::string topicTorso, std::string topicHead, std::string topicHand);
-    double offset_x=0;
-	double offset_y=0;
-	double offset_z=0;
+    double offset_x;
+	double offset_y;
+	double offset_z;
 private:
     bool torso_;
     ros::Subscriber subTorso_;
