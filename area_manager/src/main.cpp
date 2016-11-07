@@ -510,7 +510,8 @@ int main(int argc, char** argv) {
         // Humans
         for (std::map<std::string, Human*>::iterator it = humanRd.lastConfig_.begin(); it != humanRd.lastConfig_.end(); ++it) {
             // We update area with human center
-			
+            for(std::map<std::string, Joint*>::iterator it2 = it->second->skeleton_.begin() , it2 != it->second->skeleton_.end(); ++it2)
+			    mapEntities_[it2->first]=it2-second;
             mapEntities_[it->first] = it->second;
             updateEntityArea(mapArea_, it->second);
         }
@@ -566,7 +567,7 @@ int main(int argc, char** argv) {
                     ownerEnt = objectRd.lastConfig_[itArea->second->getMyOwner()];
             }
 
-            mapEntities_.insert("rightHand",(Entity*)(humanRd.lastConfig_["HERACKLES_HUMAN1"]->skeleton_["rightHand"]));
+            
 
             for (std::map<std::string, Entity*>::iterator itEntity = mapEntities_.begin(); itEntity != mapEntities_.end(); ++itEntity) {
 
