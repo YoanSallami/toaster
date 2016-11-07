@@ -510,7 +510,7 @@ int main(int argc, char** argv) {
         // Humans
         for (std::map<std::string, Human*>::iterator it = humanRd.lastConfig_.begin(); it != humanRd.lastConfig_.end(); ++it) {
             // We update area with human center
-			mapEntities_["rightHand"] = it->second->skeleton_["rightHand"];
+			
             mapEntities_[it->first] = it->second;
             updateEntityArea(mapArea_, it->second);
         }
@@ -565,6 +565,8 @@ int main(int argc, char** argv) {
                 else if (objectRd.lastConfig_.find(itArea->second->getMyOwner()) != objectRd.lastConfig_.end())
                     ownerEnt = objectRd.lastConfig_[itArea->second->getMyOwner()];
             }
+
+            mapEntities_.add("rightHand",humanRd->LastConfig["HERACKLES_HUMAN1"]->skeleton_["rightHand"]);
 
             for (std::map<std::string, Entity*>::iterator itEntity = mapEntities_.begin(); itEntity != mapEntities_.end(); ++itEntity) {
 
