@@ -566,7 +566,7 @@ int main(int argc, char** argv) {
                     ownerEnt = objectRd.lastConfig_[itArea->second->getMyOwner()];
             }
 
-            mapEntities_.insert("rightHand",humanRd.LastConfig_["HERACKLES_HUMAN1"]->skeleton_["rightHand"]);
+            mapEntities_.insert("rightHand",humanRd.lastConfig_["HERACKLES_HUMAN1"]->skeleton_["rightHand"]);
 
             for (std::map<std::string, Entity*>::iterator itEntity = mapEntities_.begin(); itEntity != mapEntities_.end(); ++itEntity) {
 
