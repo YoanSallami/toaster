@@ -510,10 +510,10 @@ int main(int argc, char** argv) {
         // Humans
         for (std::map<std::string, Human*>::iterator it = humanRd.lastConfig_.begin(); it != humanRd.lastConfig_.end(); ++it) {
             // We update area with human center
-            for(int i=0 ; i<it->second.meAgent.skeletonNames.size() ; ++i)
+            for(int i=0 ; i<it->second->meAgent.skeletonNames.size() ; ++i)
 				if(it->first.skeletonNames[i]=="rightHand")
 				{
-					mapEntities_[it->second.meAgent.skeletonNames[i]] = it->second.meAgent.skeletonJoint[i].meEntity;
+					mapEntities_[it->second->meAgent.skeletonNames[i]] = it->second->meAgent.skeletonJoint[i].meEntity;
 					//updateEntityArea(mapArea_, it->second);
 				}
             mapEntities_[it->first] = it->second;
