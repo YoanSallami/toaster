@@ -441,7 +441,7 @@ bool publishAllAreas(toaster_msgs::Empty::Request &req,
 
 int main(int argc, char** argv) {
     // Set this in a ros service
-    const bool AGENT_FULL_CONFIG = false; //If false we will use only position and orientation
+    const bool AGENT_FULL_CONFIG = true; //If false we will use only position and orientation
 
     ros::init(argc, argv, "area_manager");
     ros::NodeHandle node;
