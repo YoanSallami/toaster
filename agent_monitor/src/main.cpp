@@ -536,6 +536,101 @@ std::map<std::string, double> computeIsLookingToward(std::map<std::string, TRBuf
     return returnMap;
 }
 
+std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBuffer < Entity* > > mapEnts, std::string agentMonitored, double deltaDist, double angularAperture) {
+    Map_t returnMap;
+    Pair_t pair;
+    Entity * currentEntity;
+    Entity * monitoredAgentHand;
+    float halfAperture = angularAperture / 2.f;
+    Vec_t agentHandPosition(3);
+    Vec_t agentHandOrientation(3);
+    Vec_t entityPosition(3);
+    Vec_t agentToEntity(3);
+    Vec_t coneAxis(3);
+    Vec_t coneBase(3);
+    float entitytoAxisAngle;
+    Mat_t rotX(3);
+    Mat_t rotY(3);
+    Mat_t rotZ(3);
+    bool isInInfiniteCone = false;
+    double angle;
+
+    //Get the monitored agent head entity
+    //TODO add a rosparam for robot's head joint name
+    if (agentMonitored == "pr2") {
+            return returnMap;
+        }
+    } else {
+        std::map<std::string, Joint*> skelMap = ((Agent*) mapEnts[agentMonitored].back())->skeleton_;
+        if (skelMap.find("rightHand") != skelMap.end()) {
+            monitoredAgentHand = skelMap["rightHand"];
+        } else {
+            return returnMap;
+        }
+    }
+    //Get 3d position from agent head
+    agentHandPosition[0] = bg::get<0>(monitoredAgentHand->getPosition());
+    agentHandPosition[1] = bg::get<1>(monitoredAgentHand->getPosition());
+    agentHandPosition[2] = bg::get<2>(monitoredAgentHand->getPosition());
+    //Get 3d orientation (roll pitch yaw) from agent head
+    agentHandOrientation = (Vec_t) monitoredAgentHand->getOrientation();
+    //Compute rotation matricies from agent head orientation
+    rotX = MathFunctions::matrixfromAngle(0, agentHandOrientation[0]);
+    rotY = MathFunctions::matrixfromAngle(1, agentHandOrientation[1]);
+    rotZ = MathFunctions::matrixfromAngle(2, agentHandOrientation[2]);
+
+    for (std::map<std::string, TRBuffer < Entity*> >::iterator it = mapEnts.begin(); it != mapEnts.end(); ++it) {
+        if (it->first != agentMonitored) {
+            //Get the current entity
+            if (it->first == "pr2") {
+                //robots
+                std::map<std::string, Joint*> skelMap = ((Agent*) it->second.back())->skeleton_;
+                if (skelMap.find("head_tilt_link") != skelMap.end()) {
+                    currentEntity = skelMap["head_tilt_link"];
+                } else {
+                    break;
+                }
+            } else if (it->first == "HERAKLES_HUMAN1" || it->first == "HERAKLES_HUMAN2") {
+                //humans
+                std::map<std::string, Joint*> skelMap = ((Agent*) it->second.back())->skeleton_;
+                if (skelMap.find("head") != skelMap.end()) {
+                    currentEntity = skelMap["head"];
+                } else {
+                    break;
+                }
+            } else {
+                //objects
+                currentEntity = it->second.back();
+            }
+            //Get the postion from current entity
+            entityPosition[0] = bg::get<0>(currentEntity->getPosition());
+            entityPosition[1] = bg::get<1>(currentEntity->getPosition());
+            entityPosition[2] = bg::get<2>(currentEntity->getPosition());
+            //Compute cone base coordinates
+            coneBase[0] = agentHandPosition[0] + deltaDist;
+            coneBase[1] = agentHandPosition[1];
+            coneBase[2] = agentHandPosition[2];
+            //Compute cone axis
+            coneAxis = MathFunctions::diffVec(agentHandPosition, coneBase);
+            //Apply rotation matrix from agent head orientation to cone base
+            coneAxis = MathFunctions::multiplyMatVec(rotY, coneAxis);
+            coneAxis = MathFunctions::multiplyMatVec(rotZ, coneAxis);
+            //Compute the 3d vector from agent head to current entity
+            agentToEntity = MathFunctions::diffVec(agentHandPosition, entityPosition);
+            //Compute angle
+            angle = (MathFunctions::dotProd(agentToEntity, coneAxis) / MathFunctions::magn(agentToEntity) / MathFunctions::magn(coneAxis));
+            //Test
+            //ROS_INFO("%f > %f",angle,cos(halfAperture));
+            if (angle > cos(halfAperture)) {
+                if (MathFunctions::dotProd(agentToEntity, coneAxis) / MathFunctions::magn(coneAxis) < MathFunctions::magn(coneAxis)) {
+                    returnMap.insert(std::pair<std::string, double>(it->first, angle));
+                }
+            }
+        }
+    }
+    return returnMap;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::map<std::string, double> computeJointDeltaDist(std::map<std::string, TRBuffer < Entity* > > mapEnts,
@@ -861,6 +956,9 @@ bool pointingTowardRequest(toaster_msgs::Pointing::Request &req,
 void dynParamCallback(agent_monitor::agent_monitorConfig &config, uint32_t level) {
     lookTwdDeltaDist_ = config.lookTwdDeltaDist;
     lookTwdAngularAperture_ = config.lookTwdAngularAperture;
+
+    pointingTwdDeltaDist_ = config.pointingTwdDeltaDist;
+    pointingTwdAngularAperture_ = config.pointingTwdAngularAperture;
 
     motion2DBodyTime_ = (unsigned long) (config.motion2DBodyTime * oneSecond_);
     motion2DBodySpeedThreshold_ = config.motion2DBodySpeedThreshold; // this is in m/s
@@ -1299,6 +1397,30 @@ int main(int argc, char** argv) {
                     fact_msg.subjectId = (*itAgnt);
                     fact_msg.targetId = it->first;
                     fact_msg.confidence = (lookTwdAngularAperture_ - it->second) / lookTwdAngularAperture_;
+                    fact_msg.doubleValue = it->second;
+                    fact_msg.time = mapTRBEntity_[(*itAgnt)].back()->getTime();
+                    fact_msg.subjectOwnerId = "";
+                    fact_msg.targetOwnerId = "";
+                    fact_msg.valueType = 1;
+
+                    factList_msg.factList.push_back(fact_msg);
+                }
+            }
+
+            double angleDirection = 0.0;
+            std::map<std::string, double> mapIdValuePointing;
+            mapIdValuePointing = computeIsPointingToward(mapTRBEntity_, (*itAgnt), pointingTwdDeltaDist_, pointingTwdAngularAperture_);
+
+            if (!mapIdValue.empty()) {
+                for (std::map<std::string, double>::iterator it = mapIdValuePointing.begin(); it != mapIdValuePointing.end(); ++it) {
+                    //ROS_INFO("%s is looking toward %s",(*itAgnt).c_str(),it->first.c_str());
+                    fact_msg.property = "IsPointingToward";
+                    fact_msg.propertyType = "attention";
+                    fact_msg.subProperty = "agent";
+                    fact_msg.stringValue = "";
+                    fact_msg.subjectId = (*itAgnt);
+                    fact_msg.targetId = it->first;
+                    fact_msg.confidence = (pointingTwdAngularAperture_ - it->second) / pointingTwdAngularAperture_;
                     fact_msg.doubleValue = it->second;
                     fact_msg.time = mapTRBEntity_[(*itAgnt)].back()->getTime();
                     fact_msg.subjectOwnerId = "";
