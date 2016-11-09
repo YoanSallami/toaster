@@ -1409,7 +1409,6 @@ int main(int argc, char** argv) {
                 }
             }
 
-            double angleDirection = 0.0;
             std::map<std::string, double> mapIdValuePointing;
             mapIdValuePointing = computeIsPointingToward(mapTRBEntity_, (*itAgnt), pointingTwdDeltaDist_, pointingTwdAngularAperture_);
 
