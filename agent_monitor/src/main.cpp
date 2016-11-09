@@ -559,7 +559,6 @@ std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBu
     //TODO add a rosparam for robot's head joint name
     if (agentMonitored == "pr2") {
             return returnMap;
-        }
     } else {
         std::map<std::string, Joint*> skelMap = ((Agent*) mapEnts[agentMonitored].back())->skeleton_;
         if (skelMap.find("rightHand") != skelMap.end()) {
