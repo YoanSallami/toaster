@@ -44,6 +44,9 @@ std::map<std::string, TRBuffer < Entity* > >::iterator itTRB_;
 double lookTwdDeltaDist_ = 2.0;
 double lookTwdAngularAperture_ = 2 * PI / 3;
 
+double pointingTwdDeltaDist_ = 2.0;
+double pointingTwdAngularAperture_ = 2 * PI / 3;
+
 //We consider motion when it moves more than 3 cm during 1/4 second, so when higher than 0.12 m/s
 unsigned long motion2DBodyTime_ = oneSecond_ / 4;
 double motion2DBodySpeedThreshold_ = 0.12; // this are m/s
