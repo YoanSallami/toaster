@@ -578,7 +578,7 @@ std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBu
     //Get 3d orientation (roll pitch yaw) from agent head
     agentHandOrientation = (Vec_t) monitoredAgentHand->getOrientation();
     //Compute rotation matricies from agent head orientation
-    rotX = MathFunctions::matrixfromAngle(0,agentHandOrientation[0]);
+    rotX = MathFunctions::matrixfromAngle(0,agentHandOrientation[0]+pi);
     rotY = MathFunctions::matrixfromAngle(1, agentHandOrientation[1]);
     rotZ = MathFunctions::matrixfromAngle(2, agentHandOrientation[2]);
 
@@ -616,7 +616,7 @@ std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBu
             //Compute cone axis
             coneAxis = MathFunctions::diffVec(agentHandPosition, coneBase);
             //Apply rotation matrix from agent head orientation to cone base
-            //coneAxis = MathFunctions::multiplyMatVec(rotX, coneAxis);
+            coneAxis = MathFunctions::multiplyMatVec(rotX, coneAxis);
             coneAxis = MathFunctions::multiplyMatVec(rotY, coneAxis);
             coneAxis = MathFunctions::multiplyMatVec(rotZ, coneAxis);
             //Compute the 3d vector from agent head to current entity
