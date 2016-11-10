@@ -557,6 +557,7 @@ std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBu
     Mat_t rotZ(3);
     bool isInInfiniteCone = false;
     double angle;
+    double pi=3.1416;
 
     //Get the monitored agent head entity
     //TODO add a rosparam for robot's head joint name
@@ -578,7 +579,7 @@ std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBu
     agentHandOrientation = (Vec_t) monitoredAgentHand->getOrientation();
     //Compute rotation matricies from agent head orientation
     rotX = MathFunctions::matrixfromAngle(0, agentHandOrientation[0]);
-    rotY = MathFunctions::matrixfromAngle(1, agentHandOrientation[1]);
+    rotY = MathFunctions::matrixfromAngle(1, agentHandOrientation[1]+pi);
     rotZ = MathFunctions::matrixfromAngle(2, agentHandOrientation[2]);
 
     for (std::map<std::string, TRBuffer < Entity*> >::iterator it = mapEnts.begin(); it != mapEnts.end(); ++it) {
