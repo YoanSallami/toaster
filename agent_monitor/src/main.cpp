@@ -617,8 +617,8 @@ std::map<std::string, double> computeIsPointingToward(std::map<std::string, TRBu
             coneAxis = MathFunctions::diffVec(agentHandPosition, coneBase);
             //Apply rotation matrix from agent head orientation to cone base
             coneAxis = MathFunctions::multiplyMatVec(rotX, coneAxis);
-            //coneAxis = MathFunctions::multiplyMatVec(rotY, coneAxis);
-            coneAxis = MathFunctions::multiplyMatVec(rotZ, coneAxis);
+            coneAxis = MathFunctions::multiplyMatVec(rotY, coneAxis);
+            //coneAxis = MathFunctions::multiplyMatVec(rotZ, coneAxis);
             //Compute the 3d vector from agent head to current entity
             agentToEntity = MathFunctions::diffVec(agentHandPosition, entityPosition);
             //Compute angle
